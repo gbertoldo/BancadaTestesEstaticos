@@ -48,6 +48,7 @@ class MainFrame(GUITemplate.MainFrame):
     self.outputFileName = ""
     self.tare = 0.0
     self.lastForce = 0.0
+    self.time0 = 0.0
 
     # Serial connection
     self.ser = None
@@ -219,6 +220,10 @@ class MainFrame(GUITemplate.MainFrame):
     
 
   def onBtnClearPlotClick( self, event ):
+    if self.time.size > 0:
+      self.time0 = self.time[-1]
+    else:
+      self.time0 = 0
     self.clearPlot()
     event.Skip()
 
@@ -299,7 +304,7 @@ class MainFrame(GUITemplate.MainFrame):
         self.force = np.append(self.force, aforce)
         self.replot()
         if (self.state == RECORDING):
-          self.save(atime, aforce-self.tare)
+          self.save(atime-self.time0, aforce-self.tare)
         self.updateForceDisplay()
         if self.time.size > self.npArrayMaxSize:
           self.time = self.time[-self.npArrayMaxSize:-1]
@@ -316,14 +321,14 @@ class MainFrame(GUITemplate.MainFrame):
       if len(self.time) > self.maxNumOfPoints:
         if ( self.radioBoxGraphOption.GetSelection() == 0 ):
           rfactor = int(len(self.time) / self.maxNumOfPoints)
-          self.timeFiltered = self.time[::rfactor]
+          self.timeFiltered = self.time[::rfactor]-self.time0
           self.forceFiltered = (self.force[::rfactor]-self.tare)*self.unitFactor
         else:
-          self.timeFiltered = self.time[-self.maxNumOfPoints:-1]
+          self.timeFiltered = self.time[-self.maxNumOfPoints:-1]-self.time0
           self.forceFiltered = (self.force[-self.maxNumOfPoints:-1]-self.tare)*self.unitFactor
         
       else:
-        self.timeFiltered = self.time
+        self.timeFiltered = self.time-self.time0
         self.forceFiltered = (self.force-self.tare)*self.unitFactor
 
       if self.timeFiltered.size > 0:
