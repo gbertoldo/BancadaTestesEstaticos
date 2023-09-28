@@ -10,7 +10,7 @@ import numpy as np
 import os
 import sys
 
-VERSION="v1.0.2"
+VERSION="v1.0.3"
 
 def resource_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
@@ -60,6 +60,7 @@ class MainFrame(GUITemplate.MainFrame):
     self.tare = 0.0
     self.lastForce = 0.0
     self.time0 = 0.0
+    self.isBusy = False
 
     # Serial connection
     self.ser = None
@@ -196,7 +197,7 @@ class MainFrame(GUITemplate.MainFrame):
       return
     else:
       devser = self.choiceSerial.GetString(idx)
-    self.ser = pserial.wxPSerial(self, notificationPeriod=50, port=devser, baudrate=115200)
+    self.ser = pserial.wxPSerial(self, notificationPeriod=200, port=devser, baudrate=115200)
 
     if self.ser.is_open():
       self.setState(CONNECTING)
@@ -298,35 +299,37 @@ class MainFrame(GUITemplate.MainFrame):
 
 
   def wxPSerialUpdate(self, msgs):
-    if (self.state == CONNECTING ):
-      self.setState(READY)
-    else:
-      atime  = np.array([])
-      aforce = np.array([])
-      for msg in msgs:
-        data = msg.split(",")
-        if data[0] == "1":
-          atime  = np.append(atime,  float(data[1]))
-          aforce = np.append(aforce, float(data[2]))
-      
-      if ( atime.size > 0 ):
-        self.lastForce = aforce[-1]
-        self.time  = np.append(self.time, atime)
-        self.force = np.append(self.force, aforce)
-        self.replot()
-        if (self.state == RECORDING):
-          self.save(atime-self.time0, aforce-self.tare)
-        self.updateForceDisplay()
-        if self.time.size > self.npArrayMaxSize:
-          self.time = self.time[-self.npArrayMaxSize:-1]
-          self.force = self.force[-self.npArrayMaxSize:-1]
+    if not self.isBusy:
+      self.isBusy=True
+      if (self.state == CONNECTING ):
+        self.setState(READY)
+      else:
+        atime  = np.array([])
+        aforce = np.array([])
+        for msg in msgs:
+          data = msg.split(",")
+          if data[0] == "1":
+            atime  = np.append(atime,  float(data[1]))
+            aforce = np.append(aforce, float(data[2]))
+        
+        if ( atime.size > 0 ):
+          self.lastForce = aforce[-1]
+          self.time  = np.append(self.time, atime)
+          self.force = np.append(self.force, aforce)
+          self.replot()
+          if (self.state == RECORDING):
+            self.save(atime-self.time0, aforce-self.tare)
+          self.updateForceDisplay()
+          if self.time.size > self.npArrayMaxSize:
+            self.time = self.time[-self.npArrayMaxSize:-1]
+            self.force = self.force[-self.npArrayMaxSize:-1]
+      self.isBusy=False
 
   def save(self, atime, aforce):
     with open(self.outputFileName, 'a') as file:
       for i in range(0,atime.size):
         file.write("%15.3f %15.4f\n"%(atime[i],aforce[i]*self.unitFactor))
-
-  
+      
   def replot(self):
     if (self.state == READY or self.state == RECORDING):
       # filtering
