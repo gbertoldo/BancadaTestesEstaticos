@@ -2,3 +2,6 @@ dist/
 releases/
 __pycache__/
 log_*.txt
+build
+doc
+bancada.spec

@@ -7,6 +7,15 @@ from datetime import datetime
 import CalibrationWizardFrame
 import wxPlotPanel
 import numpy as np
+import os
+import sys
+
+VERSION="v1.0.2"
+
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
+    return os.path.join(base_path, relative_path)
 
 def scale_bitmap(bitmap, width, height):
     image = wx.ImageFromBitmap(bitmap)
@@ -26,13 +35,15 @@ class MainFrame(GUITemplate.MainFrame):
   def __init__(self, parent):
     GUITemplate.MainFrame.__init__(self, parent)
 
+    self.SetTitle("Bancada de testes estáticos - " + VERSION + " - GFT/GFCS")
+
     # Adjusting figures
-    figReload = wx.Bitmap("./fig/reload.png")
+    figReload = wx.Bitmap(resource_path("./fig/reload.png"))
     figReload = scale_bitmap(figReload, 15, 15)
     self.bmpBtnReload.SetBitmap(figReload)
-    self.figConnected = wx.Bitmap("./fig/connected.png")
+    self.figConnected = wx.Bitmap(resource_path("./fig/connected.png"))
     self.figConnected = scale_bitmap(self.figConnected, 20, 20)
-    self.figDisconnected = wx.Bitmap("./fig/disconnected.png")
+    self.figDisconnected = wx.Bitmap(resource_path("./fig/disconnected.png"))
     self.figDisconnected = scale_bitmap(self.figDisconnected, 20, 20)
 
     # Original background color
@@ -315,6 +326,7 @@ class MainFrame(GUITemplate.MainFrame):
       for i in range(0,atime.size):
         file.write("%15.3f %15.4f\n"%(atime[i],aforce[i]*self.unitFactor))
 
+  
   def replot(self):
     if (self.state == READY or self.state == RECORDING):
       # filtering
