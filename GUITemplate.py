@@ -73,12 +73,25 @@ class MainFrame ( wx.Frame ):
 
 		bSizer5.Add( self.btnCalibrate, 0, wx.ALL|wx.EXPAND, 5 )
 
+		bSizer141 = wx.BoxSizer( wx.HORIZONTAL )
+
+		self.txtG = wx.StaticText( sbSizer3.GetStaticBox(), wx.ID_ANY, u"g local (m/s²)", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.txtG.Wrap( -1 )
+
+		bSizer141.Add( self.txtG, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+		self.btnChangeG = wx.Button( sbSizer3.GetStaticBox(), wx.ID_ANY, u"Alterar", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer141.Add( self.btnChangeG, 0, wx.ALL, 5 )
+
+
+		bSizer5.Add( bSizer141, 1, wx.EXPAND, 5 )
+
 		radioBoxUnitsChoices = [ u"N", u"kgf", u"gf" ]
 		self.radioBoxUnits = wx.RadioBox( sbSizer3.GetStaticBox(), wx.ID_ANY, u"Unidade", wx.DefaultPosition, wx.DefaultSize, radioBoxUnitsChoices, 1, wx.RA_SPECIFY_ROWS )
 		self.radioBoxUnits.SetSelection( 0 )
 		bSizer5.Add( self.radioBoxUnits, 0, wx.ALL|wx.EXPAND, 5 )
 
-		radioBoxGraphOptionChoices = [ u"Acumulado", u"Deslizante" ]
+		radioBoxGraphOptionChoices = [ u"Acumulado", u"Deslizante", u"Pausado" ]
 		self.radioBoxGraphOption = wx.RadioBox( sbSizer3.GetStaticBox(), wx.ID_ANY, u"Gráfico", wx.DefaultPosition, wx.DefaultSize, radioBoxGraphOptionChoices, 1, wx.RA_SPECIFY_ROWS )
 		self.radioBoxGraphOption.SetSelection( 0 )
 		bSizer5.Add( self.radioBoxGraphOption, 0, wx.EXPAND|wx.ALL, 5 )
@@ -205,6 +218,7 @@ class MainFrame ( wx.Frame ):
 		self.bmpBtnReload.Bind( wx.EVT_BUTTON, self.onBmpBtnReloadClick )
 		self.btnConnect.Bind( wx.EVT_BUTTON, self.onBtnConnectClick )
 		self.btnCalibrate.Bind( wx.EVT_BUTTON, self.onBtnCalibrateClick )
+		self.btnChangeG.Bind( wx.EVT_BUTTON, self.onBtnChangeG )
 		self.radioBoxUnits.Bind( wx.EVT_RADIOBOX, self.onRadioBoxUnitsClick )
 		self.radioBoxGraphOption.Bind( wx.EVT_RADIOBOX, self.onRadioBoxGraphOptionClick )
 		self.btnClearPlot.Bind( wx.EVT_BUTTON, self.onBtnClearPlotClick )
@@ -224,6 +238,9 @@ class MainFrame ( wx.Frame ):
 		event.Skip()
 
 	def onBtnCalibrateClick( self, event ):
+		event.Skip()
+
+	def onBtnChangeG( self, event ):
 		event.Skip()
 
 	def onRadioBoxUnitsClick( self, event ):
@@ -347,6 +364,76 @@ class CalibrationFrame ( wx.Frame ):
 		event.Skip()
 
 	def onBtnNextClick( self, event ):
+		event.Skip()
+
+
+###########################################################################
+## Class ChangeGDialog
+###########################################################################
+
+class ChangeGDialog ( wx.Dialog ):
+
+	def __init__( self, parent ):
+		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = u"Alterar g local", pos = wx.DefaultPosition, size = wx.DefaultSize, style = wx.DEFAULT_DIALOG_STYLE )
+
+		self.SetSizeHints( wx.Size( 300,200 ), wx.DefaultSize )
+
+		bSizer15 = wx.BoxSizer( wx.VERTICAL )
+
+		self.m_staticText16 = wx.StaticText( self, wx.ID_ANY, u"Aceleração gravitacional local. Use ponto como separador decimal.", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText16.Wrap( -1 )
+
+		bSizer15.Add( self.m_staticText16, 0, wx.ALL, 5 )
+
+		bSizer16 = wx.BoxSizer( wx.HORIZONTAL )
+
+		self.m_staticText14 = wx.StaticText( self, wx.ID_ANY, u"g=", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText14.Wrap( -1 )
+
+		bSizer16.Add( self.m_staticText14, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+		self.txtG = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer16.Add( self.txtG, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+		self.m_staticText15 = wx.StaticText( self, wx.ID_ANY, u"m/s²", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText15.Wrap( -1 )
+
+		bSizer16.Add( self.m_staticText15, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+
+		bSizer15.Add( bSizer16, 0, wx.ALIGN_CENTER_HORIZONTAL, 5 )
+
+		bSizer17 = wx.BoxSizer( wx.HORIZONTAL )
+
+		self.btnStdG = wx.Button( self, wx.ID_ANY, u"Padrão", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer17.Add( self.btnStdG, 0, wx.ALL, 5 )
+
+		self.btnApply = wx.Button( self, wx.ID_ANY, u"Aplicar", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer17.Add( self.btnApply, 0, wx.ALL, 5 )
+
+
+		bSizer15.Add( bSizer17, 0, wx.ALIGN_RIGHT, 5 )
+
+
+		self.SetSizer( bSizer15 )
+		self.Layout()
+		bSizer15.Fit( self )
+
+		self.Centre( wx.BOTH )
+
+		# Connect Events
+		self.btnStdG.Bind( wx.EVT_BUTTON, self.onBtnStdGClick )
+		self.btnApply.Bind( wx.EVT_BUTTON, self.onBtnApplyClick )
+
+	def __del__( self ):
+		pass
+
+
+	# Virtual event handlers, override them in your derived class
+	def onBtnStdGClick( self, event ):
+		event.Skip()
+
+	def onBtnApplyClick( self, event ):
 		event.Skip()
 
 

@@ -9,8 +9,9 @@ import wxPlotPanel
 import numpy as np
 import os
 import sys
+import pickle
 
-VERSION="v1.0.3"
+VERSION="v1.1.0"
 
 def resource_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
@@ -31,6 +32,34 @@ RECORDING=4
 CONNECTING=5
 
 
+class ChangeGDialog(GUITemplate.ChangeGDialog):
+  def __init__(self, parent, g):
+    GUITemplate.ChangeGDialog.__init__(self, parent)
+    self.parent = parent
+    self.setLabel(g)
+
+  def setLabel(self, g):
+    self.txtG.SetLabel("%10.7f"%(g))
+  
+  def onBtnStdGClick( self, event ):
+    self.setLabel(9.80665)
+  
+  def onBtnApplyClick( self, event ):
+    try:
+      value=float(self.txtG.GetValue())
+      if (value >= 8) and (value <= 11):
+        self.parent.setLocalG(value)
+        self.Destroy()
+      else:
+        dial = wx.MessageDialog(None, 'Valor fora do intervalo aceitável: 8 a 11 m/s².', 'Erro',
+            wx.OK | wx.ICON_ERROR)
+        dial.ShowModal()
+    except:
+      dial = wx.MessageDialog(None, 'Número inválido. Obs.: use ponto ao invés de vírgula.', 'Erro',
+            wx.OK | wx.ICON_ERROR)
+      dial.ShowModal()
+    pass
+
 class MainFrame(GUITemplate.MainFrame):
   def __init__(self, parent):
     GUITemplate.MainFrame.__init__(self, parent)
@@ -48,6 +77,9 @@ class MainFrame(GUITemplate.MainFrame):
 
     # Original background color
     self.sTxtStatusbgColor = self.sTxtStatus.GetBackgroundColour()
+    
+    # Reading the configuration file
+    self.parameters=self.readConfigParameters()
 
     # Data
     self.time = np.array([])
@@ -71,15 +103,46 @@ class MainFrame(GUITemplate.MainFrame):
     self.plotPanel.setXLabel("t (s)")
     self.plotPanel.setYLabel("F")
     self.plotPanel.setGrid()
-    #self.plotPanel.addToolbar()
+    self.plotPanel.addToolbar()
 
     self.plotPanel.draw(np.array([]),np.array([]))
 
+
     # Current state
     self.state = DISCONNECTED
-    self.setState(DISCONNECTED)
+    self.setState(self.state)
+
+    # Setting parameters
+    self.setLocalG(self.parameters["g"])
 
 
+
+  def readConfigParameters(self):
+    # default parameters
+    par={"version":VERSION, "g":9.80665}
+
+    # trying to read the parameters from file
+    if os.path.isfile("config.cfg"):
+      with open("config.cfg", 'rb') as file:  
+        par = pickle.load(file)
+    else: # if the file does not exist, create one
+      self.writeConfigParameters(par)
+    return par
+
+  def writeConfigParameters(self, par):
+    with open("config.cfg", 'wb') as file:  
+      pickle.dump(par, file)
+
+  def setLocalG(self,g):
+    self.txtG.SetLabel("g =%10.7f m/s²"%(g))
+    self.parameters["g"]=g
+    self.writeConfigParameters(self.parameters)
+    self.updateUnit()
+
+  def onBtnChangeG( self, event ):
+    dial=ChangeGDialog(self,self.parameters["g"])
+    dial.ShowModal()
+    
   def setState(self, state):
     if (state == DISCONNECTED):
       self.state = state
@@ -272,7 +335,7 @@ class MainFrame(GUITemplate.MainFrame):
   def updateUnit(self):
     unit = self.radioBoxUnits.GetSelection()
     if unit == 0:
-      self.unitFactor = 9.81
+      self.unitFactor = self.parameters["g"]
       self.unitLabel = "(N)"
       self.plotPanel.setYLabel("F (N)")
     elif unit == 1:
@@ -296,7 +359,6 @@ class MainFrame(GUITemplate.MainFrame):
     else:
       self.sTxtForce.SetLabel("---")
       self.sTxtMaxForce.SetLabel("---")
-
 
   def wxPSerialUpdate(self, msgs):
     if not self.isBusy:
@@ -332,21 +394,22 @@ class MainFrame(GUITemplate.MainFrame):
       
   def replot(self):
     if (self.state == READY or self.state == RECORDING):
-      # filtering
-      if len(self.time) > self.maxNumOfPoints:
-        if ( self.radioBoxGraphOption.GetSelection() == 0 ):
-          rfactor = int(len(self.time) / self.maxNumOfPoints)
-          self.timeFiltered = self.time[::rfactor]-self.time0
-          self.forceFiltered = (self.force[::rfactor]-self.tare)*self.unitFactor
+      plotOption = self.radioBoxGraphOption.GetSelection()
+      if plotOption != 2: # if not paused
+        # filtering
+        if len(self.time) > self.maxNumOfPoints:
+          if ( plotOption == 0 ): # all
+            rfactor = int(len(self.time) / self.maxNumOfPoints)
+            self.timeFiltered = self.time[::rfactor]-self.time0
+            self.forceFiltered = (self.force[::rfactor]-self.tare)*self.unitFactor
+          elif ( plotOption == 1 ): # slide
+            self.timeFiltered = self.time[-self.maxNumOfPoints:-1]-self.time0
+            self.forceFiltered = (self.force[-self.maxNumOfPoints:-1]-self.tare)*self.unitFactor
         else:
-          self.timeFiltered = self.time[-self.maxNumOfPoints:-1]-self.time0
-          self.forceFiltered = (self.force[-self.maxNumOfPoints:-1]-self.tare)*self.unitFactor
-        
-      else:
-        self.timeFiltered = self.time-self.time0
-        self.forceFiltered = (self.force-self.tare)*self.unitFactor
+          self.timeFiltered = self.time-self.time0
+          self.forceFiltered = (self.force-self.tare)*self.unitFactor
 
-      if self.timeFiltered.size > 0:
-        self.plotPanel.draw(self.timeFiltered,self.forceFiltered)
-      else:
-        self.plotPanel.draw(np.array([]),np.array([]))
+        if self.timeFiltered.size > 0:
+          self.plotPanel.draw(self.timeFiltered,self.forceFiltered)
+        else:
+          self.plotPanel.draw(np.array([]),np.array([]))
