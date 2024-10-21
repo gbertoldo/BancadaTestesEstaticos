@@ -11,7 +11,7 @@ import os
 import sys
 import pickle
 
-VERSION="v1.1.0"
+VERSION="v1.1.1"
 
 def resource_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
@@ -281,8 +281,8 @@ class MainFrame(GUITemplate.MainFrame):
     self.setState(READY)
 
     if status:
-      wx.MessageBox('Calibração concluída com sucesso', 'Alerta', wx.OK | wx.ICON_EXCLAMATION)
-
+      wx.MessageBox('Calibração concluída com sucesso. Retire a massa de calibração.', 'Alerta', wx.OK | wx.ICON_EXCLAMATION)
+      self.Tare()
     self.clearPlot()
 
   def clearPlot(self):
@@ -318,12 +318,15 @@ class MainFrame(GUITemplate.MainFrame):
     event.Skip()
 
   def onBtnTareClick( self, event ):
+    self.tare()
+    event.Skip()
+
+  def Tare(self):
     if self.force.size > 0:
       self.tare = self.lastForce 
     self.updateForceDisplay()
     self.replot()
-
-    event.Skip()
+    
 
   def onRadioBoxUnitsClick( self, event ):
     self.updateUnit()
