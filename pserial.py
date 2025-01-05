@@ -22,6 +22,7 @@
   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
+from abc import abstractmethod
 import serial
 import serial.tools.list_ports
 import threading
@@ -90,9 +91,13 @@ class BracketsMessageParser:
 
       return [text,msgList]
 
+class wxPSerialObserverInterface:
+    @abstractmethod
+    def wxPSerialUpdate(self, msgs: list):
+        pass
 
 class wxPSerial(wx.EvtHandler):
-    def __init__(self, parent, notificationPeriod=300, parser=BracketsMessageParser("<",">"), port=None, baudrate=9600, bytesize=8, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE, timeout=None, xonxoff=False, rtscts=False, write_timeout=0.1, dsrdtr=False, inter_byte_timeout=None, exclusive=None, **kwargs):
+    def __init__(self, parent: wx.Frame, notificationPeriod=300, parser=BracketsMessageParser("<",">"), port=None, baudrate=9600, bytesize=8, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE, timeout=None, xonxoff=False, rtscts=False, write_timeout=0.1, dsrdtr=False, inter_byte_timeout=None, exclusive=None, **kwargs):
         
         wx.EvtHandler.__init__(self)
 
@@ -106,9 +111,7 @@ class wxPSerial(wx.EvtHandler):
         # List of observers
         self.observerList = []
 
-        # Adding parent as observer
-        self.addObserver(self.parent)
-
+    def start(self):
         # Starting the serial communication
         self.ser.start()
 
@@ -128,7 +131,7 @@ class wxPSerial(wx.EvtHandler):
         event.Skip()
 
 
-    def addObserver(self, observer):
+    def addObserver(self, observer: wxPSerialObserverInterface):
         """
             Adds the observer to the list, if still not there
         """
@@ -137,7 +140,7 @@ class wxPSerial(wx.EvtHandler):
         except:
             self.observerList.append(observer)
 
-    def removeObserver(self, observer):
+    def removeObserver(self, observer: wxPSerialObserverInterface):
         """
             Removes the observer from the list, if it is there
         """

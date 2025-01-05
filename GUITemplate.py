@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ###########################################################################
-## Python code generated with wxFormBuilder (version 3.10.1-0-g8feb16b3)
+## Python code generated with wxFormBuilder (version 4.2.1-0-g80c4cb6)
 ## http://www.wxformbuilder.org/
 ##
 ## PLEASE DO *NOT* EDIT THIS FILE!
@@ -19,7 +19,7 @@ class MainFrame ( wx.Frame ):
 	def __init__( self, parent ):
 		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = u"Bancada de testes estáticos - GFT/Carl Sagan", pos = wx.DefaultPosition, size = wx.Size( 1000,700 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
 
-		self.SetSizeHints( wx.Size( 1000,700 ), wx.DefaultSize )
+		self.SetSizeHints( wx.Size( 1000,720 ), wx.DefaultSize )
 
 		bSizer1 = wx.BoxSizer( wx.HORIZONTAL )
 
@@ -269,9 +269,9 @@ class MainFrame ( wx.Frame ):
 class CalibrationFrame ( wx.Frame ):
 
 	def __init__( self, parent ):
-		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = u"Assistente de calibração", pos = wx.DefaultPosition, size = wx.Size( 500,320 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
+		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = u"Assistente de calibração", pos = wx.DefaultPosition, size = wx.Size( 500,340 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
 
-		self.SetSizeHints( wx.Size( 500,320 ), wx.DefaultSize )
+		self.SetSizeHints( wx.Size( 500,340 ), wx.DefaultSize )
 
 		bSizer8 = wx.BoxSizer( wx.VERTICAL )
 
@@ -288,8 +288,9 @@ class CalibrationFrame ( wx.Frame ):
 
 		bSizer10.Add( self.sTxtStep1, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-		self.txtCtrlMass = wx.TextCtrl( self.m_panel4, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
-		bSizer10.Add( self.txtCtrlMass, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		self.txtCtrlMass = wx.SpinCtrlDouble( self.m_panel4, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.SP_ARROW_KEYS, 0, 1000, 1, 1 )
+		self.txtCtrlMass.SetDigits( 4 )
+		bSizer10.Add( self.txtCtrlMass, 0, wx.ALL, 5 )
 
 
 		bSizer9.Add( bSizer10, 0, wx.EXPAND, 5 )
@@ -321,6 +322,11 @@ class CalibrationFrame ( wx.Frame ):
 		self.gaugeStep5 = wx.Gauge( self.m_panel4, wx.ID_ANY, 100, wx.DefaultPosition, wx.DefaultSize, wx.GA_HORIZONTAL )
 		self.gaugeStep5.SetValue( 0 )
 		bSizer9.Add( self.gaugeStep5, 0, wx.ALL|wx.EXPAND, 10 )
+
+		self.sTxtStep6 = wx.StaticText( self.m_panel4, wx.ID_ANY, u"6) Remova a massa de calibração.", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.sTxtStep6.Wrap( -1 )
+
+		bSizer9.Add( self.sTxtStep6, 0, wx.ALL, 5 )
 
 		bSizer11 = wx.BoxSizer( wx.HORIZONTAL )
 
@@ -380,7 +386,7 @@ class ChangeGDialog ( wx.Dialog ):
 
 		bSizer15 = wx.BoxSizer( wx.VERTICAL )
 
-		self.m_staticText16 = wx.StaticText( self, wx.ID_ANY, u"Aceleração gravitacional local. Use ponto como separador decimal.", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText16 = wx.StaticText( self, wx.ID_ANY, u"Aceleração gravitacional local.", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText16.Wrap( -1 )
 
 		bSizer15.Add( self.m_staticText16, 0, wx.ALL, 5 )
@@ -392,8 +398,9 @@ class ChangeGDialog ( wx.Dialog ):
 
 		bSizer16.Add( self.m_staticText14, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-		self.txtG = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
-		bSizer16.Add( self.txtG, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		self.spinCtrlDoubleG = wx.SpinCtrlDouble( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.ALIGN_RIGHT|wx.SP_ARROW_KEYS, 9.5, 10.5, 9.80665, 0.01 )
+		self.spinCtrlDoubleG.SetDigits( 5 )
+		bSizer16.Add( self.spinCtrlDoubleG, 0, wx.ALL, 5 )
 
 		self.m_staticText15 = wx.StaticText( self, wx.ID_ANY, u"m/s²", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText15.Wrap( -1 )

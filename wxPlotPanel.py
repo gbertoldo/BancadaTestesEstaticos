@@ -67,12 +67,15 @@ class wxPlotPanel(wx.Panel):
     if x.size > 0:
       self.axes.set_xlim(np.min(x),np.max(x))
       self.axes.set_ylim(np.min(y),np.max(y))
+      self.lines[0].set_data(x, y)
+      self.canvas.draw()
+      self.canvas.flush_events()
     else:
-      self.axes.set_xlim(0,1)
-      self.axes.set_ylim(0,1)
-    self.lines[0].set_data(x, y)
-    self.canvas.draw()
-    self.canvas.flush_events()
+      self.axes.set_xlim(-1.0,1.0)
+      self.axes.set_ylim(-1.0,1.0)
+      self.lines[0].set_data(np.array([0.0]), np.array([0.0]))
+      self.canvas.draw()
+      self.canvas.flush_events()
 
   def setXLabel(self, label):
     self.axes.set_xlabel(label,)
