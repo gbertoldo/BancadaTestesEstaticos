@@ -10,7 +10,8 @@ import pserial
 import MainFrame
 import datalogger
 import ChangeGDialog
-import CalibrationWizardController
+from calibration import CalibrationController
+from calibration import CalibrationAbstraction
 
 # Possible states
 READY=1
@@ -28,7 +29,7 @@ class MainControllerParameters:
 class MainController(MainFrame.MainFrameControllerInterface, 
                      pserial.wxPSerialObserverInterface, 
                      ChangeGDialog.ChangeGControllerInterface, 
-                     CalibrationWizardController.CalibrationControllerInterface):
+                     CalibrationAbstraction.CalibrationParentControllerInterface):
     def __init__(self):
         # Serial connection
         self.ser = None
@@ -103,16 +104,22 @@ class MainController(MainFrame.MainFrameControllerInterface,
             self.setState(DISCONNECTED)
 
     def startCalibration(self):
-        self.calibrationController = CalibrationWizardController.CalibrationWizardController(self, self.mainFrame,self.ser)
+        self.calibrationController = CalibrationController.CalibrationController(self, self.mainFrame)
         self.calibrationController.start(self.parameters.m)
         self.setState(CALIBRATING)
 
     def finishCalibration(self):
-        self.parameters.m = self.calibrationController.calibrationMass
+        self.parameters.m = self.calibrationController.getCalibrationMass()
         self.saveParameters(self.parameters)
         self.finishCalibrationFlag = True
         self.finishCalibrationCounter = 0
         self.setState(READY)
+
+    def sendCalibrationFactor(self, factor: float):
+        self.ser.sendMessage("s%.2f"%(factor))
+    
+    def requestCalibrationFactor(self):
+        self.ser.sendMessage("g") # Asking Arduino for the current calibration factor
 
     def changeG(self):
         dlg = ChangeGDialog.ChangeGDialog(self.mainFrame, self, self.parameters.mainFrameParameters.par["g"])
@@ -162,6 +169,7 @@ class MainController(MainFrame.MainFrameControllerInterface,
     def parseMessages(self, msgs: list):
         atime  = np.array([])
         aforce = np.array([])
+        afactor = np.array([])
         N = len(msgs)
         for i in range(0,N):
           msg = msgs.pop(0)
@@ -169,14 +177,23 @@ class MainController(MainFrame.MainFrameControllerInterface,
           if data[0] == "1":
             atime  = np.append(atime,  float(data[1]))
             aforce = np.append(aforce, float(data[2]))
-        return [atime, aforce]
+          if data[0] == "2":
+            afactor = np.append(afactor, float(data[1]))
+        return [atime, aforce, afactor]
     
     def processMessages(self, msgs):
         if self.state == CONNECTING:
             self.setState(READY)
 
-        if self.state == READY or self.state == RECORDING:
-            [t,f] = self.parseMessages(msgs)
+        [t,f,factor] = self.parseMessages(msgs)
+
+        if self.state == CALIBRATING:
+            if t.size > 0:
+                self.calibrationController.updateTimeAndForce(t, f)
+            if factor.size > 0:
+                self.calibrationController.updateCalibrationFactor(factor)
+
+        elif self.state == READY or self.state == RECORDING:
             if ( t.size > 0 ):
                 self.datalogger.append(t, f)
 

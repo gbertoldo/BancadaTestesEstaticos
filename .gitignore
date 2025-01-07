@@ -5,3 +5,4 @@ log_*.txt
 build
 doc
 bancada.spec
+config.cfg
