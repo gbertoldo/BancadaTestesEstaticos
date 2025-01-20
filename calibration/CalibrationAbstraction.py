@@ -22,7 +22,7 @@
   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
-import abstractmethod
+from abc import abstractmethod
 
 import numpy as np
 

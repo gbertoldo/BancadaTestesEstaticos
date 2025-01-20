@@ -70,9 +70,7 @@ class MainController(MainFrame.MainFrameControllerInterface,
         self.parameters.mainFrameParameters.par["listofports"] = self.getAvailableSerialPorts()
         self.parameters.mainFrameParameters.par["selectedUnit"] = self.parameters.mainFrameParameters.par["listOfUnits"][self.parameters.dataloggerParameters.selectedUnit]
         self.parameters.mainFrameParameters.par["g"] = self.parameters.dataloggerParameters.localG
-        print(self.parameters.mainFrameParameters.par["selectedUnit"])
-        print(self.parameters.mainFrameParameters.par["g"])
- 
+        
     def saveParameters(self, p: MainControllerParameters):
         with open(self.configFilename, 'wb') as handle:
            pickle.dump(p, handle, protocol=pickle.HIGHEST_PROTOCOL)

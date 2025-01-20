@@ -39,7 +39,7 @@ class CalibrationStateAbort(CalibrationStateInterface):
         self.parent.requestCalibrationFactor()
         
     def isReady(self):
-        print(self.calibractionFactorBkpVerificator,self.parent.getBackupCalibrationFactor())
+        #print(self.calibractionFactorBkpVerificator,self.parent.getBackupCalibrationFactor())
         if fabs(self.calibractionFactorBkpVerificator) > 0.0:
             return fabs(self.calibractionFactorBkpVerificator/self.parent.getBackupCalibrationFactor()-1.0) < 0.01
         else:
