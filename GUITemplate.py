@@ -289,7 +289,7 @@ class CalibrationFrame ( wx.Frame ):
 		bSizer10.Add( self.sTxtStep1, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 
 		self.txtCtrlMass = wx.SpinCtrlDouble( self.m_panel4, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.SP_ARROW_KEYS, 0, 1000, 1, 1 )
-		self.txtCtrlMass.SetDigits( 4 )
+		self.txtCtrlMass.SetDigits( 7 )
 		bSizer10.Add( self.txtCtrlMass, 0, wx.ALL, 5 )
 
 

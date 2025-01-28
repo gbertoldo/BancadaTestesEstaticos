@@ -42,7 +42,7 @@ class CalibrationState6(CalibrationStateInterface):
         self.setFrameAppearance()
 
     def isReady(self):
-        return fabs(np.average(self.force)-self.f1avg) < 3.0 * self.f1std
+        return fabs(np.average(self.force)-self.f1avg) < 10.0 * self.f1std
 
     def nextStep(self):
         if self.isReady():

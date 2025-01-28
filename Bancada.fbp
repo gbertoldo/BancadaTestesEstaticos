@@ -1919,11 +1919,11 @@
                     <property name="name">bSizer9</property>
                     <property name="orient">wxVERTICAL</property>
                     <property name="permission">none</property>
-                    <object class="sizeritem" expanded="false">
+                    <object class="sizeritem" expanded="true">
                       <property name="border">5</property>
                       <property name="flag">wxEXPAND</property>
                       <property name="proportion">0</property>
-                      <object class="wxBoxSizer" expanded="false">
+                      <object class="wxBoxSizer" expanded="true">
                         <property name="minimum_size"></property>
                         <property name="name">bSizer10</property>
                         <property name="orient">wxHORIZONTAL</property>
@@ -1990,11 +1990,11 @@
                             <property name="wrap">-1</property>
                           </object>
                         </object>
-                        <object class="sizeritem" expanded="true">
+                        <object class="sizeritem" expanded="false">
                           <property name="border">5</property>
                           <property name="flag">wxALL</property>
                           <property name="proportion">0</property>
-                          <object class="wxSpinCtrlDouble" expanded="true">
+                          <object class="wxSpinCtrlDouble" expanded="false">
                             <property name="BottomDockable">1</property>
                             <property name="LeftDockable">1</property>
                             <property name="RightDockable">1</property>
@@ -2012,7 +2012,7 @@
                             <property name="context_help"></property>
                             <property name="context_menu">1</property>
                             <property name="default_pane">0</property>
-                            <property name="digits">4</property>
+                            <property name="digits">7</property>
                             <property name="dock">Dock</property>
                             <property name="dock_fixed">0</property>
                             <property name="docking">Left</property>
@@ -2435,11 +2435,11 @@
                         <property name="window_style"></property>
                       </object>
                     </object>
-                    <object class="sizeritem" expanded="true">
+                    <object class="sizeritem" expanded="false">
                       <property name="border">5</property>
                       <property name="flag">wxALL</property>
                       <property name="proportion">0</property>
-                      <object class="wxStaticText" expanded="true">
+                      <object class="wxStaticText" expanded="false">
                         <property name="BottomDockable">1</property>
                         <property name="LeftDockable">1</property>
                         <property name="RightDockable">1</property>

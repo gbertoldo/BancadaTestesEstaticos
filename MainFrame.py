@@ -28,7 +28,7 @@ import GUITemplate
 import wxPlotPanel
 from utils import *
 
-VERSION="v1.1.2"
+VERSION="v1.1.3"
 
 class MainFrameControllerInterface:  
   @abstractmethod
@@ -115,7 +115,7 @@ class MainFrame(GUITemplate.MainFrame):
       self.choiceSerial.SetSelection(0)
 
   def setLocalG(self, g: float):
-    self.txtG.SetLabel("g =%9.6f m/s²"%(g))
+    self.txtG.SetLabel("g =%11.8f m/s²"%(g))
 
   def setSelectedUnit(self, unit):
     if unit == "newton":
