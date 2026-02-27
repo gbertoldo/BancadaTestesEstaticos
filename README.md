@@ -11,14 +11,14 @@ O _hardware_ é composto basicamente por uma célula de carga (sensor de força)
 
 Lista de componentes
 --------------------
-- Placa principal;
+- [Placa principal](https://github.com/gbertoldo/BancadaTestesEstaticos/tree/master/hardware/PCI);
 - Arduino Nano;
 - Módulo HX711 (módulo roxo);
 - Conector USB tipo B;
 - Cabo USB tipo B (para conectar a célula de carga à placa principal);
 - Cabo USB tipo A/mini USB (para conectar o Arduino ao computador);
-- Caixa de proteção produzida por impressão em 3D ([todo link]);
-- 2x Parafuso M3x5mm - cabeça chanfrada;
+- Caixa de proteção produzida por impressão em 3D ([arquivos](https://github.com/gbertoldo/BancadaTestesEstaticos/tree/master/hardware/3D));
+- Dois parafusos M3x5mm - cabeça chanfrada;
 - Célula de carga;
 
 # Firmware
